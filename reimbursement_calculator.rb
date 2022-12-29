@@ -3,6 +3,7 @@ class ReimbursementCalculator
   HIGH_COST_CITY_TRAVEL_DAY_RATE = 55
   LOW_COST_CITY_FULL_DAY_RATE = 75
   HIGH_COST_CITY_FULL_DAY_RATE = 85
+  LOW_COST_CITY = "Low Cost City".freeze
 
   def initialize(projects)
     @projects = projects
@@ -10,17 +11,11 @@ class ReimbursementCalculator
 
   def calculate
     @projects.sort_by! { |project| project.start_date }
-
     total_reimbursement = 0
 
     @projects.each_with_index do |project, index|
-      if index == 0
-        total_reimbursement += travel_day_rate(project.city_type)
-      end
-
-      if index == @projects.length - 1
-        total_reimbursement += travel_day_rate(project.city_type)
-      end
+      total_reimbursement += travel_day_rate(project.city_type) if index == 0
+      total_reimbursement += travel_day_rate(project.city_type) if index == @projects.length - 1
 
       gap = 0
       if @projects[index + 1]
@@ -40,11 +35,11 @@ class ReimbursementCalculator
   private
 
   def travel_day_rate(city_type)
-    city_type == "Low Cost City" ? LOW_COST_CITY_TRAVEL_DAY_RATE : HIGH_COST_CITY_TRAVEL_DAY_RATE
+    city_type == LOW_COST_CITY ? LOW_COST_CITY_TRAVEL_DAY_RATE : HIGH_COST_CITY_TRAVEL_DAY_RATE
   end
 
   def full_day_rate(city_type)
-    city_type == "Low Cost City" ? LOW_COST_CITY_FULL_DAY_RATE : HIGH_COST_CITY_FULL_DAY_RATE
+    city_type == LOW_COST_CITY ? LOW_COST_CITY_FULL_DAY_RATE : HIGH_COST_CITY_FULL_DAY_RATE
   end
 
   def full_day_reimbursement(project, gap, index)
